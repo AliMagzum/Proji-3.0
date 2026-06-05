@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PROJI — AI-операционный слой для бизнеса</title>
+<meta name="description" content="Proji трансформирует операционные процессы компании в AI-управляемые системы.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FFFFFF;--bg2:#F5F6FA;--bg3:#EEF1F8;
+  --card:#FFFFFF;--border:#E4E7EF;--border-h:#C8CFDF;
+  --text:#0F1117;--muted:#6B7280;--muted2:#9CA3AF;
+  --accent:#1A4CB5;--accent-h:#1540A0;--accent-light:#EEF3FF;
+  --accent2:#2563EB;--teal:#0EA5A0;
+  --font:'Inter',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:16px;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+h1{font-size:clamp(32px,5vw,62px);font-weight:800;line-height:1.06;letter-spacing:-.03em}
+h2{font-size:clamp(26px,4vw,44px);font-weight:700;line-height:1.1;letter-spacing:-.025em}
+p{color:var(--muted)}
+a{text-decoration:none}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+section{padding:100px 0}
+@media(max-width:768px){section{padding:72px 0}}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:50px;font-family:var(--font);font-size:15px;font-weight:600;cursor:pointer;border:none;text-decoration:none;transition:all .2s;white-space:nowrap}
+.btn-primary{background:#0F1117;color:#fff}
+.btn-primary:hover{background:#1A4CB5;transform:translateY(-1px);box-shadow:0 8px 24px rgba(26,76,181,.25)}
+.btn-blue{background:var(--accent);color:#fff}
+.btn-blue:hover{background:var(--accent-h);transform:translateY(-1px);box-shadow:0 8px 24px rgba(26,76,181,.3)}
+.btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--border)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-lg{padding:16px 36px;font-size:16px}
+
+/* HEADER */
+header{position:fixed;top:0;left:0;right:0;z-index:1000;padding:14px 0;background:rgba(255,255,255,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:all .3s}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:24px}
+.logo{font-size:22px;font-weight:800;letter-spacing:-.02em;color:var(--accent);font-family:var(--font)}
+nav a{padding:8px 14px;border-radius:8px;font-size:14px;font-weight:500;color:var(--muted);transition:color .2s,background .2s}
+nav a:hover{color:var(--text);background:var(--bg2)}
+.h-actions{display:flex;gap:8px}
+.h-actions .btn{padding:9px 20px;font-size:14px}
+.burger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none}
+.burger span{width:22px;height:2px;background:var(--text);display:block;border-radius:2px;transition:all .3s}
+.burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger.open span:nth-child(2){opacity:0}
+.burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mob-nav{display:none;position:fixed;inset:0;background:var(--bg);z-index:999;flex-direction:column;justify-content:center;align-items:center;gap:8px;opacity:0;transition:opacity .3s}
+.mob-nav.open{display:flex;opacity:1}
+.mob-nav a{font-size:20px;font-weight:600;color:var(--muted);padding:10px 24px;transition:color .2s}
+.mob-nav a:hover{color:var(--text)}
+.mob-nav .btn{margin-top:16px;font-size:16px;padding:14px 40px}
+@media(max-width:900px){nav,.h-actions{display:none}.burger{display:flex}}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;align-items:center;padding:120px 0 80px;position:relative;overflow:hidden;background:var(--bg)}
+.hero-blob{position:absolute;top:-200px;right:-200px;width:700px;height:700px;background:radial-gradient(circle,rgba(26,76,181,.07) 0%,transparent 70%);pointer-events:none}
+.hero-blob2{position:absolute;bottom:-100px;left:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(14,165,160,.05) 0%,transparent 70%);pointer-events:none}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+@media(max-width:860px){.hero-grid{grid-template-columns:1fr;gap:48px}}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--accent-light);border:1px solid rgba(26,76,181,.15);border-radius:50px;padding:6px 16px 6px 8px;font-size:13px;font-weight:600;color:var(--accent);margin-bottom:24px}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero-title{margin-bottom:20px;color:var(--text)}
+.hero-title span{color:var(--accent)}
+.hero-desc{font-size:18px;margin-bottom:32px;max-width:460px;line-height:1.75;color:var(--muted)}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px}
+.trust-row{display:flex;flex-wrap:wrap;gap:16px}
+.trust-chip{font-size:13px;font-weight:500;color:var(--muted);display:flex;align-items:center;gap:6px}
+.trust-chip svg{color:var(--accent)}
+
+/* DASHBOARD CARD */
+.hero-vis{position:relative}
+.dash{background:var(--bg);border:1.5px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,.04),0 20px 60px rgba(26,76,181,.08),0 40px 80px rgba(0,0,0,.06)}
+.dash-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:8px}
+.db-dot{width:10px;height:10px;border-radius:50%}
+.db-dot:nth-child(1){background:#FF5F57}
+.db-dot:nth-child(2){background:#FFBD2E}
+.db-dot:nth-child(3){background:#28C840}
+.dash-label{margin-left:8px;font-size:12px;color:var(--muted2);font-weight:500}
+.dash-body{padding:16px;display:flex;flex-direction:column;gap:8px}
+.ai-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;opacity:0;animation:slideIn .5s ease both;transition:border-color .2s,box-shadow .2s}
+.ai-card:hover{border-color:var(--accent);box-shadow:0 4px 16px rgba(26,76,181,.08)}
+.ai-card:nth-child(1){animation-delay:.1s}
+.ai-card:nth-child(2){animation-delay:.25s}
+.ai-card:nth-child(3){animation-delay:.4s}
+.ai-card:nth-child(4){animation-delay:.55s}
+@keyframes slideIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.ai-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ico-b{background:#EEF3FF}.ico-g{background:#ECFDF5}.ico-a{background:#FFFBEB}.ico-r{background:#FEF2F2}
+.ai-body{flex:1;min-width:0}
+.ai-tag{font-size:10px;font-weight:600;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.ai-text{font-size:13px;color:var(--text);font-weight:500;line-height:1.4}
+.ai-meta{font-size:11px;color:var(--muted2);margin-top:3px}
+.badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:6px;flex-shrink:0;align-self:flex-start;margin-top:2px}
+.b-ok{background:#ECFDF5;color:#059669}
+.b-new{background:#EEF3FF;color:var(--accent)}
+.b-alert{background:#FEF2F2;color:#DC2626}
+
+/* SECTION */
+.s-tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;background:var(--accent-light);padding:5px 12px;border-radius:50px}
+.s-head{margin-bottom:56px}
+.s-head.center{text-align:center}
+.s-head.center .s-desc{margin:0 auto}
+.s-title{margin-bottom:14px;color:var(--text)}
+.s-desc{color:var(--muted);max-width:560px;font-size:17px;line-height:1.7}
+
+/* TRUSTED */
+#trusted{padding:48px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg2)}
+.t-label{font-size:12px;font-weight:600;color:var(--muted2);text-align:center;margin-bottom:24px;text-transform:uppercase;letter-spacing:.08em}
+.int-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.int-chip{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;color:var(--text);transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.int-chip:hover{border-color:var(--accent);color:var(--accent);box-shadow:0 4px 12px rgba(26,76,181,.1)}
+.int-dot{width:8px;height:8px;border-radius:50%}
+
+/* PROBLEMS */
+.prob-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:900px){.prob-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:580px){.prob-grid{grid-template-columns:1fr}}
+.prob-card{background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:28px 24px;transition:all .3s;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.prob-card:hover{border-color:var(--accent);box-shadow:0 8px 32px rgba(26,76,181,.1);transform:translateY(-2px)}
+.prob-n{font-size:11px;font-weight:700;color:var(--accent);opacity:.7;margin-bottom:14px;letter-spacing:.06em}
+.prob-t{font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px}
+.prob-d{font-size:13px;color:var(--muted);line-height:1.65}
+
+/* PLATFORM */
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+@media(max-width:860px){.feat-grid{grid-template-columns:1fr}}
+.feat-list{display:flex;flex-direction:column;gap:4px}
+.feat-item{padding:22px 24px;border-radius:14px;border:1.5px solid var(--border);cursor:pointer;transition:all .25s;position:relative;background:var(--bg);box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.feat-item.active{border-color:var(--accent);box-shadow:0 4px 20px rgba(26,76,181,.1)}
+.feat-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:4px;height:50%;background:var(--accent);border-radius:0 3px 3px 0}
+.feat-item:hover:not(.active){border-color:var(--border-h);box-shadow:0 4px 12px rgba(0,0,0,.06)}
+.feat-n{font-size:11px;font-weight:700;color:var(--accent);margin-bottom:6px;letter-spacing:.06em}
+.feat-t{font-size:17px;font-weight:700;margin-bottom:6px;color:var(--text)}
+.feat-d{font-size:13px;color:var(--muted);line-height:1.6}
+.feat-vis{position:sticky;top:100px;background:var(--bg);border:1.5px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,.04),0 20px 60px rgba(26,76,181,.08)}
+.fv-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;gap:6px}
+.fv-title{font-size:12px;font-weight:600;color:var(--muted2);margin-left:6px}
+.fv-body{padding:20px;display:flex;flex-direction:column;gap:8px}
+.fv-row{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;transition:border-color .2s;overflow:hidden}
+.fv-row:hover{border-color:var(--accent)}
+.fv-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.fv-lbl{color:var(--muted2);font-size:12px;font-weight:600;width:88px;min-width:88px;flex-shrink:0}
+.fv-val{color:var(--text);font-weight:600;font-size:12px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fv-tag{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;flex-shrink:0;white-space:nowrap;margin-left:4px}
+@media(max-width:500px){.fv-lbl{width:68px;min-width:68px}.fv-body{padding:12px}.fv-row{padding:8px 10px}}
+.t-ok{background:#ECFDF5;color:#059669}
+.t-sync{background:#EEF3FF;color:var(--accent)}
+.t-live{background:#FFFBEB;color:#D97706}
+
+/* AI EMPLOYEES */
+.emp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+@media(max-width:700px){.emp-grid{grid-template-columns:1fr}}
+.emp-card{background:var(--bg);border:1.5px solid var(--border);border-radius:20px;padding:28px 24px;transition:all .3s;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.emp-card:hover{border-color:var(--accent);box-shadow:0 8px 32px rgba(26,76,181,.1);transform:translateY(-3px)}
+.emp-ava{width:48px;height:48px;border-radius:14px;margin-bottom:18px;display:flex;align-items:center;justify-content:center;background:var(--accent-light);border:1.5px solid rgba(26,76,181,.15)}
+.emp-role{font-size:11px;font-weight:700;color:var(--accent);margin-bottom:6px;text-transform:uppercase;letter-spacing:.07em}
+.emp-name{font-size:18px;font-weight:700;margin-bottom:10px;color:var(--text)}
+.emp-desc{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:18px}
+.emp-fns{display:flex;flex-direction:column;gap:6px}
+.emp-fn{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.emp-fn::before{content:'→';color:var(--accent);font-size:12px;font-weight:700}
+
+/* WORKFLOW */
+.wf-wrap{display:flex;flex-direction:column;align-items:center;max-width:560px;margin:0 auto}
+.wf-step{display:flex;align-items:center;gap:18px;width:100%;padding:18px 22px;background:var(--bg);border:1.5px solid var(--border);border-radius:14px;transition:all .25s;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.wf-step:hover{border-color:var(--accent);box-shadow:0 6px 24px rgba(26,76,181,.1)}
+.wf-num{width:34px;height:34px;border-radius:10px;background:var(--accent-light);border:1.5px solid rgba(26,76,181,.15);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--accent);flex-shrink:0}
+.wf-ico{flex-shrink:0}
+.wf-cnt{flex:1}
+.wf-t{font-size:14px;font-weight:700;margin-bottom:3px;color:var(--text)}
+.wf-d{font-size:12px;color:var(--muted)}
+.wf-conn{width:2px;height:20px;background:linear-gradient(to bottom,var(--border),transparent);margin:0 auto}
+
+/* ROI */
+.roi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:800px){.roi-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.roi-grid{grid-template-columns:1fr}}
+.roi-card{background:var(--bg);border:1.5px solid var(--border);border-radius:20px;padding:32px 24px;text-align:center;transition:all .3s;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.roi-card:hover{border-color:var(--accent);box-shadow:0 8px 32px rgba(26,76,181,.1);transform:translateY(-3px)}
+.roi-val{font-size:52px;font-weight:800;letter-spacing:-.04em;color:var(--accent);line-height:1;margin-bottom:10px}
+.roi-lbl{font-size:14px;color:var(--muted);line-height:1.5;font-weight:500}
+
+/* INTEGRATIONS */
+.integ-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:900px){.integ-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.integ-grid{grid-template-columns:repeat(2,1fr)}}
+.integ-card{background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:20px 16px;transition:all .25s;display:flex;flex-direction:column;gap:8px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.integ-ico-wrap{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:4px}
+.integ-card:hover{border-color:var(--accent);box-shadow:0 6px 20px rgba(26,76,181,.08);transform:translateY(-2px)}
+.integ-name{font-size:14px;font-weight:700;color:var(--text)}
+.integ-desc{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* SECURITY */
+.sec-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+@media(max-width:700px){.sec-grid{grid-template-columns:1fr}}
+.sec-card{background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:26px;transition:all .25s;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.sec-card:hover{border-color:var(--accent);box-shadow:0 6px 24px rgba(26,76,181,.08)}
+.sec-ico{width:44px;height:44px;border-radius:12px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.sec-t{font-size:16px;font-weight:700;margin-bottom:8px;color:var(--text)}
+.sec-d{font-size:13px;color:var(--muted);line-height:1.65}
+
+/* FAQ */
+.faq-wrap{max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.faq-item{background:var(--bg);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:border-color .2s;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.faq-item.open{border-color:var(--accent)}
+.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;padding:20px 24px;font-size:15px;font-weight:600;text-align:left;background:none;border:none;color:var(--text);cursor:pointer;transition:background .2s;font-family:var(--font)}
+.faq-q:hover{background:var(--bg2)}
+.faq-q .ico{width:24px;height:24px;border-radius:6px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--muted);transition:all .3s;flex-shrink:0}
+.faq-item.open .faq-q .ico{transform:rotate(45deg);background:var(--accent);border-color:var(--accent);color:#fff}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s;padding:0 24px;font-size:14px;color:var(--muted);line-height:1.75}
+.faq-item.open .faq-a{max-height:200px;padding:0 24px 20px}
+
+/* CTA */
+#cta{text-align:center;background:linear-gradient(135deg,#1A4CB5 0%,#2563EB 50%,#0EA5A0 100%);padding:100px 0}
+#cta .s-tag{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.cta-title{margin-bottom:18px;color:#fff}
+.cta-desc{max-width:480px;margin:0 auto 36px;font-size:18px;color:rgba(255,255,255,.8)}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-white{background:#fff;color:var(--accent)}
+.btn-white:hover{background:#F0F4FF;transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,.15)}
+.btn-outline-white{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.4)}
+.btn-outline-white:hover{border-color:#fff;background:rgba(255,255,255,.1)}
+
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:56px 0 32px}
+.foot-simple{display:flex;align-items:flex-start;justify-content:space-between;gap:40px;margin-bottom:48px;flex-wrap:wrap}
+.foot-left{max-width:320px}
+.foot-right{display:flex;flex-direction:column;gap:16px;min-width:240px}
+.foot-contact-label{font-size:11px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.08em}
+.foot-btns{display:flex;flex-direction:column;gap:10px}
+.foot-btn{display:inline-flex;align-items:center;gap:10px;padding:13px 20px;border-radius:50px;font-size:14px;font-weight:600;transition:all .2s;text-decoration:none;font-family:var(--font)}
+.foot-btn-primary{background:var(--accent);color:#fff}
+.foot-btn-primary:hover{background:var(--accent-h);box-shadow:0 6px 20px rgba(26,76,181,.3);transform:translateY(-1px)}
+.foot-btn-wa{background:#25D366;color:#fff}
+.foot-btn-wa:hover{background:#1ebe5d;box-shadow:0 6px 20px rgba(37,211,102,.3);transform:translateY(-1px)}
+@media(max-width:600px){.foot-simple{flex-direction:column}.foot-right{width:100%}}
+.foot-logo{font-size:22px;font-weight:800;color:var(--accent);margin-bottom:12px;display:inline-block}
+.foot-tagline{font-size:14px;color:var(--muted);line-height:1.65;max-width:220px}
+.foot-col-t{font-size:11px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
+.foot-links{display:flex;flex-direction:column;gap:10px}
+.foot-links a{font-size:14px;color:var(--muted);font-weight:500;transition:color .2s}
+.foot-links a:hover{color:var(--accent)}
+.foot-bot{border-top:1px solid var(--border);padding-top:22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.foot-copy{font-size:13px;color:var(--muted2);font-weight:500}
+
+/* ALT BG */
+.alt-bg{background:var(--bg2)}
+
+.fu{opacity:0;transform:translateY(20px);transition:opacity .65s ease,transform .65s ease}
+.fu.vis{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<header id="hdr">
+  <div class="container">
+    <div class="header-inner">
+      <a href="#" class="logo">Proji</a>
+      <nav>
+        <a href="#platform">Платформа</a>
+        <a href="#employees">AI-сотрудники</a>
+        <a href="#integrations">Интеграции</a>
+        <a href="#security">Безопасность</a>
+      </nav>
+      <div class="h-actions">
+        <a href="https://proji.kz/" target="_blank" rel="noopener" class="btn btn-ghost">Войти</a>
+        <a href="https://proji.kz/" target="_blank" rel="noopener" class="btn btn-blue">Запросить демо</a>
+      </div>
+      <button class="burger" id="burgerBtn" aria-label="Меню">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<nav class="mob-nav" id="mobNav">
+  <a href="#platform" onclick="closeMob()">Платформа</a>
+  <a href="#employees" onclick="closeMob()">AI-сотрудники</a>
+  <a href="#integrations" onclick="closeMob()">Интеграции</a>
+  <a href="#security" onclick="closeMob()">Безопасность</a>
+  <a href="https://proji.kz/" target="_blank" onclick="closeMob()" class="btn btn-blue">Запросить демо →</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-blob"></div>
+  <div class="hero-blob2"></div>
+  <div class="container">
+    <div class="hero-grid fu">
+      <div>
+        <div class="hero-badge"><div class="hero-badge-dot"></div>AI-операционный слой для бизнеса</div>
+        <h1 class="hero-title">AI-сотрудники для<br><span>операционных<br>процессов</span> бизнеса</h1>
+        <p class="hero-desc">Proji объединяет задачи, коммуникацию, CRM, встречи и бизнес-процессы в единую AI-систему управления операциями.</p>
+        <div class="hero-btns">
+          <a href="https://proji.kz/" target="_blank" rel="noopener" class="btn btn-primary btn-lg">Запросить демо →</a>
+          <a href="#platform" class="btn btn-ghost btn-lg">Смотреть платформу</a>
+        </div>
+        <div class="trust-row">
+          <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>AI-координация</span>
+          <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Enterprise-уровень</span>
+          <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Реальное время</span>
+        </div>
+      </div>
+      <div>
+        <div class="dash">
+          <div class="dash-bar">
+            <div class="db-dot"></div><div class="db-dot"></div><div class="db-dot"></div>
+            <span class="dash-label">proji — операционная панель</span>
+          </div>
+          <div class="dash-body">
+            <div class="ai-card">
+              <div class="ai-ico ico-b"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A4CB5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="7" r="3"/><path d="M6 11V7"/><path d="M18 11V7"/></svg></div>
+              <div class="ai-body">
+                <div class="ai-tag">AI Project Coordinator</div>
+                <div class="ai-text">Итог встречи подготовлен и отправлен команде</div>
+                <div class="ai-meta">2 мин назад · Sprint Review</div>
+              </div>
+              <div class="badge b-ok">Готово</div>
+            </div>
+            <div class="ai-card">
+              <div class="ai-ico ico-g"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+              <div class="ai-body">
+                <div class="ai-tag">Автоматизация задач</div>
+                <div class="ai-text">Задача автоматически назначена Марии К.</div>
+                <div class="ai-meta">5 мин назад · из WhatsApp</div>
+              </div>
+              <div class="badge b-new">Новая</div>
+            </div>
+            <div class="ai-card">
+              <div class="ai-ico ico-a"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></div>
+              <div class="ai-body">
+                <div class="ai-tag">Обновление CRM</div>
+                <div class="ai-text">CRM обновлена из переписки в Telegram</div>
+                <div class="ai-meta">12 мин назад · HubSpot</div>
+              </div>
+              <div class="badge b-ok">Синхр.</div>
+            </div>
+            <div class="ai-card">
+              <div class="ai-ico ico-r"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+              <div class="ai-body">
+                <div class="ai-tag">AI Operations Manager</div>
+                <div class="ai-text">Операционный риск — дедлайн через 2 дня</div>
+                <div class="ai-meta">18 мин назад · Проект Альфа</div>
+              </div>
+              <div class="badge b-alert">Риск</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUSTED -->
+<div id="trusted">
+  <div class="container">
+    <p class="t-label">Работает с вашими текущими инструментами</p>
+    <div class="int-row">
+      <div class="int-chip"><div class="int-dot" style="background:#25D366"></div>WhatsApp</div>
+      <div class="int-chip"><div class="int-dot" style="background:#26A5E4"></div>Telegram</div>
+      <div class="int-chip"><div class="int-dot" style="background:#4285F4"></div>Gmail</div>
+      <div class="int-chip"><div class="int-dot" style="background:#0F9D58"></div>Google Calendar</div>
+
+      <div class="int-chip"><div class="int-dot" style="background:#0F9D58"></div>Google Sheets</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEMS -->
+<section id="problems">
+  <div class="container">
+    <div class="s-head center fu">
+      <div class="s-tag">Проблема</div>
+      <h2 class="s-title">Большинство компаний работают<br>в разрозненных системах</h2>
+      <p class="s-desc">Задачи, встречи, чаты, CRM и таблицы существуют отдельно — процессы замедляются, управление становится хаотичным.</p>
+    </div>
+    <div class="prob-grid fu">
+      <div class="prob-card"><div class="prob-n">01</div><div class="prob-t">Разрозненные процессы</div><p class="prob-d">Команды работают в разных системах без единой картины происходящего.</p></div>
+      <div class="prob-card"><div class="prob-n">02</div><div class="prob-t">Слишком много ручной координации</div><p class="prob-d">Менеджеры тратят часы на контроль задач, напоминания и синхронизацию.</p></div>
+      <div class="prob-card"><div class="prob-n">03</div><div class="prob-t">Контекст теряется</div><p class="prob-d">Важная информация остаётся в чатах, звонках и голосовых сообщениях.</p></div>
+      <div class="prob-card"><div class="prob-n">04</div><div class="prob-t">Отчёты устаревают быстро</div><p class="prob-d">Пока формируется отчёт — ситуация внутри процессов уже изменилась.</p></div>
+      <div class="prob-card"><div class="prob-n">05</div><div class="prob-t">Нет прозрачности</div><p class="prob-d">Руководству сложно понять, что реально происходит внутри команды.</p></div>
+      <div class="prob-card"><div class="prob-n">06</div><div class="prob-t">Исполнение замедляется</div><p class="prob-d">Задачи теряются между чатами, таблицами и встречами.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PLATFORM -->
+<section id="platform" class="alt-bg">
+  <div class="container">
+    <div class="s-head fu">
+      <div class="s-tag">Платформа</div>
+      <h2 class="s-title">Proji создаёт единый<br>AI-операционный слой компании</h2>
+      <p class="s-desc">Вместо очередного таск-менеджера Proji объединяет процессы, коммуникацию и выполнение задач в координируемую AI-систему.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-list fu">
+        <div class="feat-item active" onclick="setFeat(this,0)">
+          <div class="feat-n">01</div>
+          <div class="feat-t">AI-координация процессов</div>
+          <p class="feat-d">Proji отслеживает задачи, встречи, коммуникацию и процессы в реальном времени.</p>
+        </div>
+        <div class="feat-item" onclick="setFeat(this,1)">
+          <div class="feat-n">02</div>
+          <div class="feat-t">Операционная память компании</div>
+          <p class="feat-d">Вся бизнес-информация сохраняется между проектами, командами и каналами.</p>
+        </div>
+        <div class="feat-item" onclick="setFeat(this,2)">
+          <div class="feat-n">03</div>
+          <div class="feat-t">AI-исполнение задач</div>
+          <p class="feat-d">AI-сотрудники создают задачи, отправляют напоминания, формируют итоги встреч.</p>
+        </div>
+        <div class="feat-item" onclick="setFeat(this,3)">
+          <div class="feat-n">04</div>
+          <div class="feat-t">Прозрачность операций</div>
+          <p class="feat-d">Руководители получают актуальную картину процессов без ручных отчётов.</p>
+        </div>
+      </div>
+      <div class="feat-vis fu" style="transition-delay:.2s">
+        <div class="fv-bar"><div class="db-dot"></div><div class="db-dot"></div><div class="db-dot"></div><span class="fv-title" id="fvTitle">proji — координация процессов</span></div>
+        <div class="fv-body" id="featBody">
+          <div class="fv-row"><div class="fv-dot"></div><span class="fv-lbl">Задачи</span><span class="fv-val">47 активных по 6 проектам</span><span class="fv-tag t-ok">Live</span></div>
+          <div class="fv-row"><div class="fv-dot"></div><span class="fv-lbl">Каналы</span><span class="fv-val">WhatsApp, Slack, Telegram</span><span class="fv-tag t-sync">Синхр.</span></div>
+          <div class="fv-row"><div class="fv-dot"></div><span class="fv-lbl">CRM</span><span class="fv-val">12 сделок обновлено сегодня</span><span class="fv-tag t-ok">Авто</span></div>
+          <div class="fv-row"><div class="fv-dot"></div><span class="fv-lbl">Встречи</span><span class="fv-val">3 итога сформированы AI</span><span class="fv-tag t-sync">AI</span></div>
+          <div class="fv-row"><div class="fv-dot"></div><span class="fv-lbl">Процессы</span><span class="fv-val">8 автоматизаций работают</span><span class="fv-tag t-live">Актив.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI EMPLOYEES -->
+<section id="employees">
+  <div class="container">
+    <div class="s-head fu">
+      <div class="s-tag">AI-сотрудники</div>
+      <h2 class="s-title">AI-сотрудники для рабочих<br>процессов компании</h2>
+      <p class="s-desc">Proji помогает внедрять AI-роли для координации, коммуникации и операционного управления.</p>
+    </div>
+    <div class="emp-grid fu">
+      <div class="emp-card">
+        <div class="emp-ava"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1A4CB5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+        <div class="emp-role">Роль · Координация</div>
+        <div class="emp-name">AI Project Coordinator</div>
+        <p class="emp-desc">Контролирует сроки, создаёт задачи, формирует итоги встреч и помогает проектам двигаться быстрее.</p>
+        <div class="emp-fns">
+          <div class="emp-fn">Контролирует дедлайны автоматически</div>
+          <div class="emp-fn">Создаёт и назначает задачи</div>
+          <div class="emp-fn">Формирует итоги встреч</div>
+          <div class="emp-fn">Отправляет напоминания команде</div>
+        </div>
+      </div>
+      <div class="emp-card">
+        <div class="emp-ava"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1A4CB5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
+        <div class="emp-role">Роль · Продажи</div>
+        <div class="emp-name">AI Sales Assistant</div>
+        <p class="emp-desc">Квалифицирует заявки, обновляет CRM и автоматически сопровождает клиентов на каждом этапе.</p>
+        <div class="emp-fns">
+          <div class="emp-fn">Квалифицирует и оценивает лиды</div>
+          <div class="emp-fn">Обновляет CRM в реальном времени</div>
+          <div class="emp-fn">Автоматически сопровождает клиентов</div>
+          <div class="emp-fn">Организует переписки и задачи</div>
+        </div>
+      </div>
+      <div class="emp-card">
+        <div class="emp-ava"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1A4CB5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+        <div class="emp-role">Роль · Операции</div>
+        <div class="emp-name">AI Operations Manager</div>
+        <p class="emp-desc">Следит за процессами, обнаруживает узкие места и сигнализирует о рисках руководству.</p>
+        <div class="emp-fns">
+          <div class="emp-fn">Мониторит активные процессы</div>
+          <div class="emp-fn">Выявляет узкие места</div>
+          <div class="emp-fn">Эскалирует риски</div>
+          <div class="emp-fn">Формирует операционные отчёты</div>
+        </div>
+      </div>
+      <div class="emp-card">
+        <div class="emp-ava"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1A4CB5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.14"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.14"/></svg></div>
+        <div class="emp-role">Роль · Знания</div>
+        <div class="emp-name">AI Knowledge Assistant</div>
+        <p class="emp-desc">Сохраняет знания компании и помогает быстро находить нужную информацию.</p>
+        <div class="emp-fns">
+          <div class="emp-fn">Сохраняет знания компании</div>
+          <div class="emp-fn">Ищет по внутренней базе</div>
+          <div class="emp-fn">Отвечает на операционные вопросы</div>
+          <div class="emp-fn">Сохраняет институциональную память</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKFLOW -->
+<section id="workflow" class="alt-bg">
+  <div class="container">
+    <div class="s-head center fu">
+      <div class="s-tag">Процесс</div>
+      <h2 class="s-title">От коммуникации — к исполнению</h2>
+      <p class="s-desc">Proji превращает сообщения, встречи и задачи в координируемые операционные действия.</p>
+    </div>
+    <div class="wf-wrap fu">
+      <div class="wf-step">
+        <div class="wf-num">01</div>
+        <div class="wf-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1A4CB5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <div class="wf-cnt"><div class="wf-t">Сообщение получено в WhatsApp</div><p class="wf-d">Запрос клиента приходит через любой подключённый канал</p></div>
+      </div>
+      <div class="wf-conn"></div>
+      <div class="wf-step">
+        <div class="wf-num">02</div>
+        <div class="wf-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1A4CB5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="7" r="3"/></svg></div>
+        <div class="wf-cnt"><div class="wf-t">AI анализирует контекст</div><p class="wf-d">Proji понимает намерение, приоритет и необходимое действие</p></div>
+      </div>
+      <div class="wf-conn"></div>
+      <div class="wf-step">
+        <div class="wf-num">03</div>
+        <div class="wf-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1A4CB5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <div class="wf-cnt"><div class="wf-t">Создаётся задача</div><p class="wf-d">Назначается нужному сотруднику с дедлайном и контекстом</p></div>
+      </div>
+      <div class="wf-conn"></div>
+      <div class="wf-step">
+        <div class="wf-num">04</div>
+        <div class="wf-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1A4CB5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div>
+        <div class="wf-cnt"><div class="wf-t">Обновляются CRM и календарь</div><p class="wf-d">Все подключённые системы синхронизируются автоматически</p></div>
+      </div>
+      <div class="wf-conn"></div>
+      <div class="wf-step">
+        <div class="wf-num">05</div>
+        <div class="wf-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1A4CB5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+        <div class="wf-cnt"><div class="wf-t">AI контролирует выполнение</div><p class="wf-d">Отправляет напоминания, эскалирует задержки, закрывает цикл</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROI -->
+<section id="roi">
+  <div class="container">
+    <div class="s-head center fu">
+      <div class="s-tag">Результаты</div>
+      <h2 class="s-title">Меньше координации —<br>больше исполнения</h2>
+      <p class="s-desc">Proji помогает командам ускорять процессы без роста управленческой нагрузки.</p>
+    </div>
+    <div class="roi-grid fu">
+      <div class="roi-card"><div class="roi-val" data-target="60">0</div><div class="roi-lbl">Меньше времени на<br>ручную координацию</div></div>
+      <div class="roi-card"><div class="roi-val" data-target="3" data-suffix="x">0</div><div class="roi-lbl">Быстрее скорость<br>выполнения задач</div></div>
+      <div class="roi-card"><div class="roi-val" data-target="85">0</div><div class="roi-lbl">Меньше времени на<br>подготовку отчётов</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- INTEGRATIONS -->
+<section id="integrations" class="alt-bg">
+  <div class="container">
+    <div class="s-head center fu">
+      <div class="s-tag">Интеграции</div>
+      <h2 class="s-title">Работает с вашими<br>текущими инструментами</h2>
+      <p class="s-desc">Proji подключается к существующим системам и помогает выстроить единый операционный контур компании.</p>
+    </div>
+    <div class="integ-grid fu">
+      <div class="integ-card">
+        <div class="integ-ico-wrap" style="background:#f0fdf4">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+        </div>
+        <div class="integ-name">WhatsApp</div><p class="integ-desc">Создавайте задачи из переписок прямо в мессенджере</p>
+      </div>
+      <div class="integ-card">
+        <div class="integ-ico-wrap" style="background:#eff8ff">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="#26A5E4"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        </div>
+        <div class="integ-name">Telegram</div><p class="integ-desc">Подключите командные чаты к операционному слою</p>
+      </div>
+      <div class="integ-card">
+        <div class="integ-ico-wrap" style="background:#fff1f0">
+          <svg width="32" height="32" viewBox="0 0 24 24"><path fill="#EA4335" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+        </div>
+        <div class="integ-name">Gmail</div><p class="integ-desc">Извлекайте задачи и контекст из email-переписок</p>
+      </div>
+      <div class="integ-card">
+        <div class="integ-ico-wrap" style="background:#f0f4ff">
+          <svg width="32" height="32" viewBox="0 0 24 24"><path fill="#4285F4" d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.5 6.5h-2.25v1.5H16.5v1.5h-2.25V13.5h-1.5v-2H10.5V10H9v-1.5h1.5V7h1.5v1.5h2.25V7H16.5v1.5z"/><path fill="#34A853" d="M12 21.5a9.5 9.5 0 0 0 6.713-2.787L12 12v9.5z"/><path fill="#FBBC04" d="M2.5 12A9.5 9.5 0 0 0 12 21.5V12H2.5z"/><path fill="#EA4335" d="M12 2.5A9.5 9.5 0 0 0 2.5 12H12V2.5z"/><rect fill="#4285F4" x="10.5" y="7" width="1.5" height="10"/><rect fill="#4285F4" x="7" y="10.5" width="10" height="1.5"/></svg>
+        </div>
+        <div class="integ-name">Google Calendar</div><p class="integ-desc">Автопланирование задач и синхронизация встреч</p>
+      </div>
+
+      <div class="integ-card">
+        <div class="integ-ico-wrap" style="background:#f0fdf4">
+          <svg width="32" height="32" viewBox="0 0 24 24"><path fill="#34A853" d="M2 2h20v20H2z" rx="2"/><path fill="white" d="M4 8h16v1.5H4zm0 3.5h16V13H4zm0 3.5h10v1.5H4z"/><rect fill="white" x="4" y="4" width="7" height="3" rx=".5"/></svg>
+        </div>
+        <div class="integ-name">Google Sheets</div><p class="integ-desc">Синхронизируйте операционные данные в реальном времени</p>
+      </div>
+
+      <div class="integ-card">
+        <div class="integ-ico-wrap" style="background:#f3f0ff">
+          <svg width="32" height="32" viewBox="0 0 24 24"><path fill="#7B68EE" d="M4.459 0C2 0 0 2 0 4.459v15.082C0 22 2 24 4.459 24h15.082C22 24 24 22 24 19.541V4.459C24 2 22 0 19.541 0zm7.607 5.528l2.956 5.12 2.956-5.12h2.388L16.02 12l3.346 6.472h-2.388l-2.956-5.12-2.956 5.12H8.678L12.024 12 8.678 5.528z"/></svg>
+        </div>
+        <div class="integ-name">ClickUp</div><p class="integ-desc">AI-управление проектами и задачами нового уровня</p>
+      </div>
+      <div class="integ-card">
+        <div class="integ-ico-wrap" style="background:#fff8f0">
+          <svg width="32" height="32" viewBox="0 0 24 24"><path fill="#F6A623" d="M19.03 4.883c-1.253 0-2.266 1.02-2.266 2.28 0 1.263 1.013 2.28 2.266 2.28 1.249 0 2.265-1.017 2.265-2.28 0-1.26-1.016-2.28-2.265-2.28zM4.965 4.883c-1.25 0-2.265 1.02-2.265 2.28 0 1.263 1.016 2.28 2.265 2.28 1.253 0 2.267-1.017 2.267-2.28 0-1.26-1.014-2.28-2.267-2.28zm7.033 0c-1.252 0-2.265 1.02-2.265 2.28 0 1.263 1.013 2.28 2.265 2.28 1.254 0 2.267-1.017 2.267-2.28 0-1.26-1.013-2.28-2.267-2.28zm-7.033 7.03c-1.25 0-2.265 1.016-2.265 2.268 0 1.253 1.016 2.267 2.265 2.267 1.253 0 2.267-1.014 2.267-2.267 0-1.252-1.014-2.268-2.267-2.268zm7.033 0c-1.252 0-2.265 1.016-2.265 2.268 0 1.253 1.013 2.267 2.265 2.267 1.254 0 2.267-1.014 2.267-2.267 0-1.252-1.013-2.268-2.267-2.268zm7.032 0c-1.249 0-2.265 1.016-2.265 2.268 0 1.253 1.016 2.267 2.265 2.267 1.253 0 2.265-1.014 2.265-2.267 0-1.252-1.012-2.268-2.265-2.268zM4.965 18.94c-1.25 0-2.265 1.016-2.265 2.268 0 1.253 1.016 2.267 2.265 2.267 1.253 0 2.267-1.014 2.267-2.267 0-1.252-1.014-2.268-2.267-2.268zm7.033 0c-1.252 0-2.265 1.016-2.265 2.268 0 1.253 1.013 2.267 2.265 2.267 1.254 0 2.267-1.014 2.267-2.267 0-1.252-1.013-2.268-2.267-2.268z"/></svg>
+        </div>
+        <div class="integ-name">Monday</div><p class="integ-desc">Подключите процессы и автоматизируйте обновление статусов</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECURITY -->
+<section id="security">
+  <div class="container">
+    <div class="s-head fu">
+      <div class="s-tag">Безопасность</div>
+      <h2 class="s-title">Безопасность и контроль<br>корпоративного уровня</h2>
+      <p class="s-desc">Proji разработан для компаний, которым важны прозрачность процессов, контроль доступа и надёжная работа с данными.</p>
+    </div>
+    <div class="sec-grid fu">
+      <div class="sec-card">
+        <div class="sec-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1A4CB5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div class="sec-t">Разграничение доступа</div>
+        <p class="sec-d">Ролевое управление правами. Гибкое управление видимостью процессов между командами и сотрудниками.</p>
+      </div>
+      <div class="sec-card">
+        <div class="sec-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1A4CB5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></div>
+        <div class="sec-t">Прозрачность действий</div>
+        <p class="sec-d">Полная история задач, процессов и AI-действий сохраняется в системе. Любой аудит — в один клик.</p>
+      </div>
+      <div class="sec-card">
+        <div class="sec-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1A4CB5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div class="sec-t">Защита данных</div>
+        <p class="sec-d">Защита данных корпоративного уровня. Ваши бизнес-данные остаются приватными и под полным контролем.</p>
+      </div>
+      <div class="sec-card">
+        <div class="sec-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1A4CB5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg></div>
+        <div class="sec-t">Безопасные интеграции</div>
+        <p class="sec-d">Подключение существующих сервисов без перестройки внутренних процессов и без ущерба безопасности.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="alt-bg">
+  <div class="container">
+    <div class="s-head center fu">
+      <div class="s-tag">FAQ</div>
+      <h2 class="s-title">Частые вопросы</h2>
+    </div>
+    <div class="faq-wrap fu">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Что такое Proji?<span class="ico">+</span></button>
+        <div class="faq-a">Proji — AI-платформа для координации задач, коммуникации и бизнес-процессов компании. Она объединяет ваши инструменты в единый AI-операционный слой, который автоматизирует координацию и повышает прозрачность.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Какие системы поддерживает Proji?<span class="ico">+</span></button>
+        <div class="faq-a">Proji поддерживает интеграции с WhatsApp, Telegram, Trello, Jira, CRM-системами, Google Calendar, Gmail, Slack, HubSpot и другими. Настройка занимает несколько минут, а не недель.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Безопасно ли использовать Proji?<span class="ico">+</span></button>
+        <div class="faq-a">Да. Proji предоставляет защиту корпоративного уровня: ролевое управление доступом, полные журналы аудита, шифрование передачи данных и безопасную облачную инфраструктуру.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Можно ли автоматизировать задачи?<span class="ico">+</span></button>
+        <div class="faq-a">Да. AI-сотрудники автоматически создают задачи, отправляют напоминания, обновляют CRM, формируют итоги встреч и координируют процессы — без ручного вмешательства.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Proji поддерживает WhatsApp?<span class="ico">+</span></button>
+        <div class="faq-a">Да. Proji нативно интегрируется с WhatsApp Business: вы можете создавать задачи, обновлять CRM и запускать автоматизации прямо из переписок.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Подходит ли Proji для малого бизнеса?<span class="ico">+</span></button>
+        <div class="faq-a">Да. Proji подходит как для небольших команд от 5 человек, так и для крупных компаний со сложными операционными процессами. Система масштабируется вместе с бизнесом.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Как долго длится внедрение?<span class="ico">+</span></button>
+        <div class="faq-a">Большинство команд запускают систему за один день. Мы обеспечиваем управляемое внедрение, поддержку при настройке и структурированный план для быстрого старта.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="container">
+    <div class="fu">
+      <div class="s-tag">Начать</div>
+      <h2 class="cta-title">Постройте AI-систему<br>управления операциями</h2>
+      <p class="cta-desc">Объедините процессы, коммуникацию и выполнение задач в единую AI-инфраструктуру компании.</p>
+      <div class="cta-btns">
+        <a href="https://proji.kz/" target="_blank" rel="noopener" class="btn btn-white btn-lg">Запросить демо →</a>
+        <a href="https://wa.me/77766006636" target="_blank" rel="noopener" class="btn btn-outline-white btn-lg">Связаться с командой</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="foot-simple">
+      <div class="foot-left">
+        <a href="#" class="foot-logo">Proji</a>
+        <p class="foot-tagline">AI-платформа для управления операциями, задачами, коммуникацией и рабочими процессами компании.</p>
+      </div>
+      <div class="foot-right">
+        <p class="foot-contact-label">Свяжитесь с нами</p>
+        <div class="foot-btns">
+          <a href="https://proji.kz/" target="_blank" rel="noopener" class="foot-btn foot-btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Запросить демо
+          </a>
+          <a href="https://wa.me/77766006636" target="_blank" rel="noopener" class="foot-btn foot-btn-wa">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+            +7 776 600 6636
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <span class="foot-copy">© 2025 Proji. Все права защищены.</span>
+      <span class="foot-copy">AI Operating Layer for Business</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('scroll',()=>{
+  document.getElementById('hdr').style.boxShadow=scrollY>20?'0 2px 20px rgba(0,0,0,.08)':'none'
+})
+document.getElementById('burgerBtn').addEventListener('click',()=>{
+  document.getElementById('burgerBtn').classList.toggle('open')
+  document.getElementById('mobNav').classList.toggle('open')
+})
+function closeMob(){
+  document.getElementById('burgerBtn').classList.remove('open')
+  document.getElementById('mobNav').classList.remove('open')
+}
+
+function toggleFaq(btn){
+  const item=btn.closest('.faq-item')
+  const wasOpen=item.classList.contains('open')
+  document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'))
+  if(!wasOpen)item.classList.add('open')
+}
+
+const featData=[
+  {title:'proji — координация процессов',rows:[{l:'Задачи',v:'47 активных по 6 проектам',t:'Live',tc:'t-ok'},{l:'Каналы',v:'WhatsApp, Slack, Telegram',t:'Синхр.',tc:'t-sync'},{l:'CRM',v:'12 сделок обновлено сегодня',t:'Авто',tc:'t-ok'},{l:'Встречи',v:'3 итога сформированы AI',t:'AI',tc:'t-sync'},{l:'Процессы',v:'8 автоматизаций работают',t:'Актив.',tc:'t-live'}]},
+  {title:'proji — операционная память',rows:[{l:'База знаний',v:'2 400 записей контекста',t:'Индекс.',tc:'t-sync'},{l:'Встречи',v:'Последние 30 дней',t:'Авто',tc:'t-ok'},{l:'Решения',v:'Tracked across teams',t:'Live',tc:'t-live'},{l:'Проекты',v:'Полная история доступна',t:'Сохр.',tc:'t-sync'},{l:'Чаты',v:'Кросс-канальный контекст',t:'Актив.',tc:'t-ok'}]},
+  {title:'proji — AI-исполнение',rows:[{l:'Задачи создан.',v:'34 задачи AI сегодня',t:'Авто',tc:'t-ok'},{l:'Напоминания',v:'12 отправлено утром',t:'Готово',tc:'t-sync'},{l:'Итоги встреч',v:'5 заметок сформировано',t:'AI',tc:'t-live'},{l:'Follow-up',v:'8 клиентских follow-up',t:'Авто',tc:'t-ok'},{l:'Эскалации',v:'2 риска эскалированы',t:'Сигнал',tc:'t-sync'}]},
+  {title:'proji — прозрачность операций',rows:[{l:'Скорость команды',v:'↑ 23% в этом спринте',t:'Live',tc:'t-ok'},{l:'Узкие места',v:'1 выявлено в Дизайне',t:'Сигнал',tc:'t-live'},{l:'Просроченные',v:'3 задачи требуют внимания',t:'Внимание',tc:'t-sync'},{l:'Риск-статус',v:'Низкий — всё в норме',t:'Норма',tc:'t-ok'},{l:'Отчёт',v:'Сформирован 4 мин назад',t:'Авто',tc:'t-sync'}]},
+]
+function setFeat(el,idx){
+  document.querySelectorAll('.feat-item').forEach(f=>f.classList.remove('active'))
+  el.classList.add('active')
+  const d=featData[idx]
+  document.getElementById('fvTitle').textContent=d.title
+  document.getElementById('featBody').innerHTML=d.rows.map(r=>`<div class="fv-row"><div class="fv-dot"></div><span class="fv-lbl">${r.l}</span><span class="fv-val">${r.v}</span><span class="fv-tag ${r.tc}">${r.t}</span></div>`).join('')
+}
+
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')})},{threshold:0.1})
+document.querySelectorAll('.fu').forEach(el=>obs.observe(el))
+
+function animateCounter(el){
+  const target=+el.dataset.target
+  const suffix=el.dataset.suffix||'%'
+  let start=null
+  function step(ts){
+    if(!start)start=ts
+    const p=Math.min((ts-start)/1400,1)
+    const ease=1-Math.pow(1-p,3)
+    el.textContent=Math.round(ease*target)+suffix
+    if(p<1)requestAnimationFrame(step)
+  }
+  requestAnimationFrame(step)
+}
+const cObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('[data-target]').forEach(animateCounter);cObs.unobserve(e.target)}})},{threshold:0.3})
+const roiEl=document.querySelector('.roi-grid')
+if(roiEl)cObs.observe(roiEl)
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+.next
+
+# Sensitive credentials — never commit, use CREDS_JSON env var on Vercel
+data/credentials.json

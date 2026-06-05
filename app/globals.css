@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  
+  --color-proji-dark: var(--proji-dark);
+  --color-proji-primary: #3b82f6;
+  --color-proji-mint: #2dd4bf;
+  --color-proji-bg: var(--proji-bg);
+  --color-proji-sidebar: var(--proji-sidebar);
+  --color-proji-text: var(--proji-text);
+  --color-proji-secondary: var(--proji-secondary);
+  --color-proji-success: #10b981;
+  --color-proji-border: var(--proji-border);
+
+  --spacing-proji-base: 24px;
+
+  --animate-gradient-x: gradient-x 3s ease infinite;
+  --animate-glow-mint: glow-mint 2s ease-in-out infinite;
+  --animate-floating-glow: floating-glow 6s ease-in-out infinite;
+  --animate-shimmer: shimmer 2s linear infinite;
+  --animate-bg-flow: bg-flow 15s ease infinite;
+}
+
+@keyframes bg-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+@keyframes floating-glow {
+  0%, 100% {
+    background-position: 0% 50%;
+    opacity: 0.3;
+  }
+  50% {
+    background-position: 100% 50%;
+    opacity: 0.6;
+  }
+}
+
+@keyframes glow-mint {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(45, 212, 191, 0.2), 0 0 10px rgba(45, 212, 191, 0.1);
+    border-color: rgba(45, 212, 191, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(45, 212, 191, 0.5), 0 0 30px rgba(45, 212, 191, 0.3);
+    border-color: rgba(45, 212, 191, 0.6);
+  }
+}
+
+@keyframes gradient-x {
+  0%, 100% {
+    background-size: 200% 200%;
+    background-position: left center;
+  }
+  50% {
+    background-size: 200% 200%;
+    background-position: right center;
+  }
+}
+
+@layer base {
+  :root {
+    --proji-dark: #001f3f;
+    --proji-bg: #ffffff;
+    --proji-sidebar: #f8fafc;
+    --proji-text: #001a33;
+    --proji-secondary: #475569;
+    --proji-border: #e2e8f0;
+    --proji-primary: #004d99;
+    --proji-deep-blue: #001a33;
+  }
+
+  .dark {
+    --proji-dark: #001f3f; /* Deep Dark Blue */
+    --proji-bg: #000b1a; /* Even Deeper Blue */
+    --proji-sidebar: #011627;
+    --proji-text: #e6f1ff;
+    --proji-secondary: #8892b0;
+    --proji-border: #003366;
+    --proji-primary: #3b82f6;
+  }
+
+  body {
+    @apply bg-proji-bg text-proji-text font-sans antialiased transition-colors duration-300;
+  }
+}
+
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Custom Thin Scrollbar */
+.proji-scrollbar::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+
+.proji-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.proji-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-proji-border rounded-full;
+}
+
+.proji-scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-proji-secondary/20;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.glow-success {
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.2);
+}
+
+.glow-blue-mint {
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.4), 0 0 30px rgba(45, 212, 191, 0.2);
+}
+
+.task-card {
+  @apply bg-white border border-proji-border/80 p-6 rounded-[20px] mb-4 transition-all duration-200 hover:border-proji-primary/40;
+}
