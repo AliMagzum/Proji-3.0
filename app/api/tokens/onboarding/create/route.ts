@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 import { authOptions } from '../../../../../src/lib/auth';
-import { isTokensApiServerConfigured } from '../../../../../src/lib/tokens-api/config';
+import { isTokensApiServerConfigured, tokensApiSetupHint } from '../../../../../src/lib/tokens-api/config';
 import { createOrganizationWithWorkspace, TokensApiError } from '../../../../../src/lib/tokens-api/server';
 
 export async function POST(req: Request) {
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
 
   if (!isTokensApiServerConfigured()) {
     return NextResponse.json(
-      { error: 'TOKENS_API_BEARER_TOKEN is not configured on server' },
+      { error: tokensApiSetupHint(), fallback: 'local' },
       { status: 503 },
     );
   }

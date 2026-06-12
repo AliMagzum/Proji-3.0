@@ -6,9 +6,11 @@ import { useAppStore } from '../store/useAppStore';
 export function AIBadge() {
   const { isAiPanelOpen, setIsAiPanelOpen, isProcessing } = useAppStore();
 
+  if (isAiPanelOpen) return null;
+
   return (
     <motion.button
-      onClick={() => setIsAiPanelOpen(!isAiPanelOpen)}
+      onClick={() => setIsAiPanelOpen(true)}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       className={`fixed bottom-20 md:bottom-6 right-4 md:right-6 z-[200] flex items-center gap-2 px-4 py-2.5 rounded-full shadow-lg transition-colors ${

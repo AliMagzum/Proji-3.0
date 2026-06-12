@@ -305,6 +305,24 @@ export const en = {
     eyebrow: 'Messages',
     title: 'Team chat',
     subtitle: 'Organization-wide chat. Per-task chat is on the Chat tab in Tasks.',
+    back: 'Back',
+    streams: {
+      title: 'Streams',
+      general: 'General',
+      tasks: 'Tasks',
+      clients: 'Clients',
+    },
+    threads: {
+      title: 'Threads',
+      general: 'General chat',
+      subtitle: 'Team conversation',
+      noTasks: 'No tasks with chat',
+      wazzupSoon: 'Wazzup — coming soon',
+    },
+    wazzup: {
+      title: 'Wazzup integration',
+      desc: 'Client chats from WhatsApp, Instagram and other channels will appear here.',
+    },
   },
   teamChat: {
     pickTeam: 'Select a team',
@@ -420,12 +438,14 @@ export const en = {
     statsTasks: 'Tasks',
     searchPlaceholder: 'Search team members...',
     tasksLabel: 'Tasks',
+    noTasks: 'No assigned tasks',
     statusOnline: 'Online',
     statusOffline: 'Offline',
     roles: {
       marketing: 'Marketing',
       development: 'Development',
       finance: 'Finance',
+      member: 'Member',
     },
   },
   comingSoon: {

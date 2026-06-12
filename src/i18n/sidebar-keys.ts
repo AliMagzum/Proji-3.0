@@ -14,7 +14,7 @@ export const SIDEBAR_ROUTES: Record<string, string> = {
   projects: '/projects',
   goalsTree: '/goals-tree',
   projectManage: '/projects/manage',
-  projectTasks: '/projects/tasks',
+  projectTasks: '/tasks',
   taskBoard: '/board',
   tasks: '/tasks',
   reports: '/reports',

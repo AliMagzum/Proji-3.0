@@ -18,12 +18,14 @@ export function TeamChat({
   taskTitle,
   currentUserEmail,
   className = '',
+  variant = 'default',
 }: {
   workspaceId?: string | null;
   taskId?: string | null;
   taskTitle?: string;
   currentUserEmail?: string | null;
   className?: string;
+  variant?: 'default' | 'telegram';
 }) {
   const { t, locale } = useI18n();
   const [messages, setMessages] = useState<TaskChatMessage[]>([]);
@@ -122,11 +124,17 @@ export function TeamChat({
 
   let lastDay = '';
 
+  const isTelegram = variant === 'telegram';
+
   return (
     <div
-      className={`flex flex-col bg-slate-50 rounded-xl border border-slate-200 overflow-hidden min-h-[420px] ${className}`}
+      className={`flex flex-col overflow-hidden ${
+        isTelegram
+          ? 'bg-[#f0f4f8] min-h-0 h-full'
+          : 'bg-slate-50 rounded-xl border border-slate-200 min-h-[420px]'
+      } ${className}`}
     >
-      {taskTitle && (
+      {taskTitle && !isTelegram && (
         <div className="px-4 py-2 border-b border-slate-200 bg-white text-xs font-bold text-slate-600">
           {t('teamChat.chatTask').replace('{title}', taskTitle)}
         </div>
@@ -135,7 +143,9 @@ export function TeamChat({
       <div
         ref={listRef}
         onScroll={onScroll}
-        className="flex-1 overflow-y-auto p-4 space-y-4 min-h-[280px] max-h-[min(60vh,520px)]"
+        className={`flex-1 overflow-y-auto p-3 md:p-4 space-y-3 min-h-0 ${
+          isTelegram ? '' : 'min-h-[280px] max-h-[min(60vh,520px)]'
+        }`}
       >
         {loading && messages.length === 0 && (
           <div className="flex justify-center py-8">
@@ -171,10 +181,14 @@ export function TeamChat({
                     {msg.user_name}
                   </p>
                   <div
-                    className={`px-3 py-2 rounded-2xl text-sm leading-relaxed border ${
-                      me
-                        ? 'bg-blue-50 border-blue-100 text-slate-800 rounded-br-md'
-                        : 'bg-white border-slate-200 text-slate-800 rounded-bl-md'
+                    className={`px-3 py-2 text-sm leading-relaxed ${
+                      isTelegram
+                        ? me
+                          ? 'bg-proji-primary text-white rounded-2xl rounded-br-sm shadow-sm'
+                          : 'bg-white text-slate-800 rounded-2xl rounded-bl-sm shadow-sm border border-slate-100'
+                        : me
+                          ? 'bg-blue-50 border-blue-100 text-slate-800 rounded-2xl rounded-br-md border'
+                          : 'bg-white border-slate-200 text-slate-800 rounded-2xl rounded-bl-md border'
                     }`}
                   >
                     {msg.text}
@@ -186,8 +200,10 @@ export function TeamChat({
         })}
       </div>
 
-      <div className="p-3 border-t border-slate-200 bg-white">
-        <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 pl-4 pr-1 py-1">
+      <div className={`p-2 md:p-3 shrink-0 ${isTelegram ? 'bg-white border-t border-proji-border' : 'border-t border-slate-200 bg-white'}`}>
+        <div className={`flex items-center gap-2 rounded-full pl-4 pr-1 py-1 ${
+          isTelegram ? 'bg-[#f0f4f8] border border-proji-border' : 'border border-slate-200 bg-slate-50'
+        }`}>
           <input
             value={text}
             onChange={(e) => setText(e.target.value)}

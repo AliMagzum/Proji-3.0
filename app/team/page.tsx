@@ -1,37 +1,103 @@
 'use client';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import { CheckCircle2, Clock, Search } from 'lucide-react';
 import { PageWrapper } from '../../src/components/PageWrapper';
 import { useI18n } from '../../src/context/I18nContext';
+import { getOrganization, getWorkspaceId } from '../../src/lib/organization';
+import { loadWorkspaceTasks } from '../../src/lib/workspace-tasks';
+import type { WorkspaceTask } from '../../src/types/workspace';
 
 type MemberStatus = 'online' | 'offline';
+
+interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  status: MemberStatus;
+  avatar: string;
+  email?: string;
+  tasks: WorkspaceTask[];
+}
+
+function avatarFromName(name: string) {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) return `${parts[0]![0]}${parts[1]![0]}`.toUpperCase();
+  return name.slice(0, 2).toUpperCase();
+}
+
+function isTaskDone(status: string) {
+  return status === 'Готово' || status === 'Архив';
+}
 
 export default function TeamPage() {
   const { t } = useI18n();
   const [search, setSearch] = useState('');
   const [selectedMember, setSelectedMember] = useState<string | null>(null);
+  const [workspaceTasks, setWorkspaceTasks] = useState<WorkspaceTask[]>([]);
 
-  const domainTeam = useMemo(
-    () => [
-      { id: '1', name: 'Анна К.', role: 'HR', status: 'online' as MemberStatus, avatar: 'АК', tasks: [{ title: 'Онбординг новых лидов', status: 'pending' }, { title: 'Обновление базы знаний', status: 'completed' }] },
-      { id: '2', name: 'Сергей П.', role: 'Admin', status: 'online' as MemberStatus, avatar: 'СП', tasks: [{ title: 'Мониторинг серверов', status: 'pending' }, { title: 'Патч безопасности #12', status: 'completed' }] },
-      { id: '3', name: 'Мария Л.', roleKey: 'marketing', role: t('team.roles.marketing'), status: 'offline' as MemberStatus, avatar: 'МЛ', tasks: [{ title: 'Запуск рекламной кампании', status: 'pending' }] },
-      { id: '4', name: 'Дмитрий В.', roleKey: 'development', role: t('team.roles.development'), status: 'online' as MemberStatus, avatar: 'ДВ', tasks: [{ title: 'Деплой v2.4', status: 'completed' }, { title: 'Code review PR#45', status: 'pending' }] },
-      { id: '5', name: 'Ольга С.', roleKey: 'finance', role: t('team.roles.finance'), status: 'online' as MemberStatus, avatar: 'ОС', tasks: [{ title: 'Квартальный отчет', status: 'pending' }] },
-    ],
-    [t],
-  );
+  const org = getOrganization();
+  const workspaceId = getWorkspaceId(org);
+
+  useEffect(() => {
+    if (!workspaceId) return;
+    loadWorkspaceTasks(workspaceId).then(setWorkspaceTasks).catch(() => setWorkspaceTasks([]));
+  }, [workspaceId]);
+
+  const domainTeam = useMemo((): TeamMember[] => {
+    const mockBase: Omit<TeamMember, 'tasks'>[] = [
+      { id: '1', name: 'Анна К.', role: 'HR', status: 'online', avatar: 'АК', email: 'anna@demo.local' },
+      { id: '2', name: 'Сергей П.', role: 'Admin', status: 'online', avatar: 'СП', email: 'serik@demo.local' },
+      { id: '3', name: 'Мария Л.', role: t('team.roles.marketing'), status: 'offline', avatar: 'МЛ', email: 'maria@demo.local' },
+      { id: '4', name: 'Дмитрий В.', role: t('team.roles.development'), status: 'online', avatar: 'ДВ', email: 'ali@demo.local' },
+      { id: '5', name: 'Ольга С.', role: t('team.roles.finance'), status: 'online', avatar: 'ОС', email: 'anel@demo.local' },
+    ];
+
+    const tasksByEmail = new Map<string, WorkspaceTask[]>();
+    for (const task of workspaceTasks) {
+      if (!task.assigneeEmail) continue;
+      const list = tasksByEmail.get(task.assigneeEmail) ?? [];
+      list.push(task);
+      tasksByEmail.set(task.assigneeEmail, list);
+    }
+
+    const fromTasks: TeamMember[] = [];
+    for (const [email, tasks] of tasksByEmail) {
+      if (mockBase.some((m) => m.email === email)) continue;
+      const name = tasks[0]?.assigneeName ?? email;
+      fromTasks.push({
+        id: email,
+        name,
+        role: t('team.roles.member'),
+        status: 'online',
+        avatar: avatarFromName(name),
+        email,
+        tasks,
+      });
+    }
+
+    const merged = mockBase.map((m) => ({
+      ...m,
+      tasks: m.email ? (tasksByEmail.get(m.email) ?? []) : [],
+    }));
+
+    return [...merged, ...fromTasks];
+  }, [workspaceTasks, t]);
 
   const statusLabel = (status: MemberStatus) =>
     status === 'online' ? t('team.statusOnline') : t('team.statusOffline');
 
-  const filtered = domainTeam.filter((m) => m.name.toLowerCase().includes(search.toLowerCase()) || m.role.toLowerCase().includes(search.toLowerCase()));
+  const filtered = domainTeam.filter(
+    (m) =>
+      m.name.toLowerCase().includes(search.toLowerCase()) ||
+      m.role.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  const totalTasks = domainTeam.reduce((s, m) => s + m.tasks.length, 0);
 
   return (
     <PageWrapper>
       <div className="px-4 md:px-12 pb-12 max-w-5xl mx-auto w-full">
-        {/* Stats */}
         <div className="grid grid-cols-3 gap-4 mb-8">
           <div className="bg-white rounded-2xl border border-proji-border p-4">
             <p className="text-xs font-bold text-proji-secondary uppercase tracking-wide mb-1">{t('team.statsTotal')}</p>
@@ -43,11 +109,10 @@ export default function TeamPage() {
           </div>
           <div className="bg-white rounded-2xl border border-proji-border p-4">
             <p className="text-xs font-bold text-proji-secondary uppercase tracking-wide mb-1">{t('team.statsTasks')}</p>
-            <p className="text-3xl font-black text-proji-primary">{domainTeam.reduce((s, m) => s + m.tasks.length, 0)}</p>
+            <p className="text-3xl font-black text-proji-primary">{totalTasks}</p>
           </div>
         </div>
 
-        {/* Search */}
         <div className="relative mb-6">
           <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-proji-secondary" />
           <input
@@ -58,7 +123,6 @@ export default function TeamPage() {
           />
         </div>
 
-        {/* Team grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filtered.map((member, i) => (
             <motion.div
@@ -85,14 +149,24 @@ export default function TeamPage() {
               {selectedMember === member.id && (
                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="border-t border-proji-border pt-4 space-y-2">
                   <p className="text-[10px] font-black uppercase tracking-widest text-proji-secondary mb-2">{t('team.tasksLabel')}</p>
-                  {member.tasks.map((task, j) => (
-                    <div key={j} className="flex items-center gap-2">
-                      {task.status === 'completed'
-                        ? <CheckCircle2 size={12} className="text-proji-success shrink-0" />
-                        : <Clock size={12} className="text-proji-amber shrink-0" />}
-                      <span className={`text-xs ${task.status === 'completed' ? 'line-through text-proji-secondary' : 'text-proji-dark'}`}>{task.title}</span>
-                    </div>
-                  ))}
+                  {member.tasks.length === 0 ? (
+                    <p className="text-xs text-proji-secondary">{t('team.noTasks')}</p>
+                  ) : (
+                    member.tasks.map((task) => {
+                      const done = isTaskDone(task.status);
+                      return (
+                        <div key={task.id} className="flex items-center gap-2">
+                          {done
+                            ? <CheckCircle2 size={12} className="text-proji-success shrink-0" />
+                            : <Clock size={12} className="text-proji-amber shrink-0" />}
+                          <span className={`text-xs ${done ? 'line-through text-proji-secondary' : 'text-proji-dark'}`}>
+                            {task.title}
+                          </span>
+                          <span className="text-[10px] text-proji-secondary ml-auto shrink-0">{task.status}</span>
+                        </div>
+                      );
+                    })
+                  )}
                 </motion.div>
               )}
             </motion.div>

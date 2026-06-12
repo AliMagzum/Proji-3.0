@@ -307,6 +307,24 @@ export const ru = {
     title: 'Командный чат',
     subtitle:
       'Общая переписка организации. Чат по задаче — на вкладке «Чат» в разделе «Задачи».',
+    back: 'Назад',
+    streams: {
+      title: 'Потоки',
+      general: 'Общий',
+      tasks: 'Задачи',
+      clients: 'Клиенты',
+    },
+    threads: {
+      title: 'Диалоги',
+      general: 'Общий чат',
+      subtitle: 'Командная переписка',
+      noTasks: 'Нет задач с чатом',
+      wazzupSoon: 'Wazzup — скоро',
+    },
+    wazzup: {
+      title: 'Интеграция Wazzup',
+      desc: 'Здесь появятся чаты с клиентами из WhatsApp, Instagram и других каналов.',
+    },
   },
   teamChat: {
     pickTeam: 'Выберите команду',
@@ -422,12 +440,14 @@ export const ru = {
     statsTasks: 'Задачи',
     searchPlaceholder: 'Поиск сотрудников...',
     tasksLabel: 'Задачи',
+    noTasks: 'Нет назначенных задач',
     statusOnline: 'В сети',
     statusOffline: 'Оффлайн',
     roles: {
       marketing: 'Маркетинг',
       development: 'Разработка',
       finance: 'Финансы',
+      member: 'Участник',
     },
   },
   comingSoon: {

@@ -91,25 +91,29 @@ export async function createOrganization(
   name: string,
 ): Promise<{ org: Organization; inviteCode: string }> {
   if (isTokensApiClientEnabled()) {
-    const data = await tokensBff.createOrg(name);
-    const org: Organization = {
-      id: String(data.organizationId),
-      organizationId: data.organizationId,
-      workspaceId: data.workspaceId,
-      name: data.name,
-      role: 'admin',
-      joinedAt: new Date().toISOString(),
-    };
-    setOrganization(org);
-    registerInvite({
-      code: data.inviteCode,
-      orgId: org.id,
-      orgName: org.name,
-      organizationId: data.organizationId,
-      workspaceId: data.workspaceId,
-      createdAt: new Date().toISOString(),
-    });
-    return { org, inviteCode: data.inviteCode };
+    try {
+      const data = await tokensBff.createOrg(name);
+      const org: Organization = {
+        id: String(data.organizationId),
+        organizationId: data.organizationId,
+        workspaceId: data.workspaceId,
+        name: data.name,
+        role: 'admin',
+        joinedAt: new Date().toISOString(),
+      };
+      setOrganization(org);
+      registerInvite({
+        code: data.inviteCode,
+        orgId: org.id,
+        orgName: org.name,
+        organizationId: data.organizationId,
+        workspaceId: data.workspaceId,
+        createdAt: new Date().toISOString(),
+      });
+      return { org, inviteCode: data.inviteCode };
+    } catch {
+      /* tokens API недоступен или токен не настроен — локальный режим */
+    }
   }
 
   const id = `org_${Date.now().toString(36)}`;

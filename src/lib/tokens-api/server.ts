@@ -1,5 +1,5 @@
 import { DEFAULT_KANBAN_COLUMNS } from './constants';
-import { TOKENS_API_BASE, tokensApiUserId } from './config';
+import { isValidTokensBearerToken, TOKENS_API_BASE, tokensApiUserId } from './config';
 import type { TokensCard, TokensColumn, TokensOrganization, TokensWorkspace } from './types';
 
 export class TokensApiError extends Error {
@@ -14,8 +14,13 @@ export class TokensApiError extends Error {
 
 function bearer(): string {
   const token = process.env.TOKENS_API_BEARER_TOKEN?.trim();
-  if (!token) throw new TokensApiError('TOKENS_API_BEARER_TOKEN is not set', 500);
-  return token;
+  if (!isValidTokensBearerToken(token)) {
+    throw new TokensApiError(
+      'TOKENS_API_BEARER_TOKEN не задан или недействителен (нужен ASCII-токен от бэкенда)',
+      503,
+    );
+  }
+  return token!;
 }
 
 export async function tokensFetch<T>(

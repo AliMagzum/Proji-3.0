@@ -39,7 +39,7 @@ export default function ProjectOverviewPage() {
   const sections = [
     {
       label: t('projects.overview.tasks'),
-      href: `/projects/${id}/tasks`,
+      href: '/tasks',
       icon: CheckCircle2,
       desc: t('projects.overview.tasksCount').replace('{count}', String(taskCount)),
     },

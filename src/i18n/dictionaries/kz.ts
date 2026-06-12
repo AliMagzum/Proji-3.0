@@ -304,6 +304,24 @@ export const kz = {
     eyebrow: 'Хабарламалар',
     title: 'Командалық чат',
     subtitle: 'Ұйымның жалпы чаты. Тапсырма чаты — «Тапсырмалар» бөліміндегі «Чат» қойындысында.',
+    back: 'Артқа',
+    streams: {
+      title: 'Ағындар',
+      general: 'Жалпы',
+      tasks: 'Тапсырмалар',
+      clients: 'Клиенттер',
+    },
+    threads: {
+      title: 'Диалогтар',
+      general: 'Жалпы чат',
+      subtitle: 'Командалық хат алмасу',
+      noTasks: 'Чатты тапсырмалар жоқ',
+      wazzupSoon: 'Wazzup — жақында',
+    },
+    wazzup: {
+      title: 'Wazzup интеграциясы',
+      desc: 'WhatsApp, Instagram және басқа арналардан клиент чаттары осында пайда болады.',
+    },
   },
   teamChat: {
     pickTeam: 'Команданы таңдаңыз',
@@ -419,12 +437,14 @@ export const kz = {
     statsTasks: 'Тапсырмалар',
     searchPlaceholder: 'Қызметкерлерді іздеу...',
     tasksLabel: 'Тапсырмалар',
+    noTasks: 'Тағайындалған тапсырмалар жоқ',
     statusOnline: 'Желіде',
     statusOffline: 'Офлайн',
     roles: {
       marketing: 'Маркетинг',
       development: 'Әзірлеу',
       finance: 'Қаржы',
+      member: 'Мүше',
     },
   },
   comingSoon: {

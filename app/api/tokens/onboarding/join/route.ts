@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 import { authOptions } from '../../../../../src/lib/auth';
-import { isTokensApiServerConfigured } from '../../../../../src/lib/tokens-api/config';
+import { isTokensApiServerConfigured, tokensApiSetupHint } from '../../../../../src/lib/tokens-api/config';
 import { tokensFetch, TokensApiError } from '../../../../../src/lib/tokens-api/server';
 
 export async function POST(req: Request) {
@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   }
 
   if (!isTokensApiServerConfigured()) {
-    return NextResponse.json({ error: 'API not configured' }, { status: 503 });
+    return NextResponse.json({ error: tokensApiSetupHint(), fallback: 'local' }, { status: 503 });
   }
 
   try {
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
         name: result.name,
       });
     } catch (joinErr) {
-      if (!(joinErr instanceof TokensApiError) || joinErr.status !== 404) {
+      if (!(joinErr instanceof TokensApiError) || ![404, 405, 501].includes(joinErr.status)) {
         throw joinErr;
       }
     }
